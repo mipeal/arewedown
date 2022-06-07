@@ -96,7 +96,7 @@ module.exports = {
         _settings = Object.assign({
         
             // override default title
-            header: 'Are We Down?',
+            header: 'NCSC - 2022',
         
             // path all log data is written to. This folder is in the AWD? root folder.
             logs : './logs',

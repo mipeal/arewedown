@@ -34,6 +34,5 @@ module.exports = (end, start) => {
     
     if (mins >= 1)
         return `${mins} minute${plural(mins)}`
-    
     return `${secs} second${plural(secs)}`
 }

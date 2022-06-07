@@ -1,1 +1,52 @@
 # this file intentionally blank
+watchers:
+    01-Service-1:
+        # checks if this website is up
+        url: http://google.com
+    01-Service-2:
+        host: www.google.com
+        test: net.ping
+        timeout: 10
+    01-Service-3:
+        cmd : python3 /home/kali/status.py -h 192.168.22.7 -p 21
+    02-Service-1:
+        host: 192.168.22.7:8080
+        timeout: 1
+    02-Service-2:
+        # checks if this website is up
+        url: http://google.com
+    02-Service-3:
+        host: www.google.com
+        test: net.ping
+        timeout: 10
+    03-Service-1:
+        cmd : python3 /home/kali/status.py -h 192.168.22.7 -p 21
+    03-Service-2:
+        host: 192.168.22.7:8080
+        timeout: 1
+    03-Service-3:
+        # checks if this website is up
+        url: http://google.com
+    04-Service-1:
+        host: www.google.com
+        test: net.ping
+        timeout: 10
+    04-Service-2:
+        cmd : python3 /home/kali/status.py -h 192.168.22.7 -p 21
+    04-Service-3:
+        host: 192.168.22.7:8080
+        timeout: 1
+dashboards:
+    All Teams:
+    Team 1:
+        enabled: true
+        watchers: 01-Service-1, 01-Service-2, 01-Service-3
+    Team 2:
+        enabled: true
+        watchers: 02-Service-1, 02-Service-2, 02-Service-3
+    Team 3:
+        enabled: true
+        watchers: 03-Service-1, 03-Service-2, 03-Service-3
+    Team 4:
+        enabled: true
+        watchers: 04-Service-1, 04-Service-2, 04-Service-3

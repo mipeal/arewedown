@@ -2361,9 +2361,9 @@ lowercase-keys@^2.0.0:
     handlebars-layouts "3.1.4"
     madscience-fsUtils "https://github.com/shukriadams/node-fsUtils.git#0.0.6"
 
-"madscience-httputils@https://github.com/shukriadams/node-httpUtils.git#0.0.7":
+"madscience-httputils@https://github.com/shukriadams/node-httpUtils.git#0.0.8":
   version "0.0.2"
-  resolved "https://github.com/shukriadams/node-httpUtils.git#5d02227a76648088d40847c104736a1c08f2f161"
+  resolved "https://github.com/shukriadams/node-httpUtils.git#ed9ea42a4ac14df309f8cb81a85a5d78b2476e72"
   dependencies:
     fs-extra "6.0.0"
     request "2.88.0"

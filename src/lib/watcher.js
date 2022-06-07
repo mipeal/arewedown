@@ -11,6 +11,7 @@ module.exports = class {
         this.busy = false
         this.lastRun = new Date()
         this.nextRun = new Date()
+        this.point = 100
     }
 
     calcNextRun(){
@@ -52,6 +53,7 @@ module.exports = class {
             exec = require('madscience-node-exec')
 
         this.lastRun = new Date()
+        this.point = 100
         let testRun = ''
 
         try {
@@ -105,13 +107,18 @@ module.exports = class {
         // write state of watcher to filesystem
         let status = null
         if (this.isPassing)
-            status = await history.writePassing(this.config.__safeName, this.lastRun)
+            status = await history.writePassing(this.config.__safeName, this.lastRun, this.point)
         else 
             status = await history.writeFailing(this.config.__safeName, this.lastRun, this.errorMessage)
 
         // send alerts if status changed
         if (status.changed){
             this.log.info(`Status changed, "${this.config.__name}" is ${this.isPassing? 'passing': 'failing'}.`)
+            this.sendAlerts()
+        }
+        // point
+        if (status.point !== this.point){
+            this.log.info(`Point changed, "${this.config.__name}" is now at ${status.point}.`)
             this.sendAlerts()
         }
     }

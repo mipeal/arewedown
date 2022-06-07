@@ -4,8 +4,10 @@ module.exports = {
      * Marks a item as passing. returns true if the item status changed since the last status write
      * @param {string} safeName Name of watcher or listener, file-system safe
      * @param {Date} date Date of the event being marked.
+     * @param {int} point Point of the event being marked.
      */
-    async writePassing(safeName, date){
+    /* Writing a file to the file system. */
+    async writePassing(safeName, date, point){
         let settings = require('./settings').get(),
             fs = require('fs-extra'),
             path = require('path'),
@@ -14,17 +16,17 @@ module.exports = {
             changed = false,
             downDate = null,
             historyLogFolder = path.join(settings.logs, safeName, 'history')
-
+        
         await fs.ensureDir(historyLogFolder)
 
         await fs.writeJson(path.join(historyLogFolder, `status.json`), {
             status : 'up',
-            date 
+            date,
+            point 
         })
 
         // site is back up after fail was previous detected, clean up flag and write log
         if (await fs.exists(downFlag)){
-            
             try {
                 downDate = (await fs.readJson(downFlag)).date
             } catch(ex){
@@ -32,28 +34,40 @@ module.exports = {
             }
 
             await fs.remove(downFlag)
-
+            
+            const event = await this.getLastEvent(safeName)
+            if (event.point < point){
+                point = parseInt(event.point)
+            }
+            //test
+            console.log("History point: "+point)
             await fs.writeJson(path.join(historyLogFolder, `${date.getTime()}.json`), {
                 status : 'up',
-                date
+                date,
+                point
             })
 
             changed = true
         }
 
         // if no history exists, write start entry, status flag counts for 1, history will be 1 more
-        if ((await fs.readdir(historyLogFolder)).length < 2)
+        if ((await fs.readdir(historyLogFolder)).length < 1)
             await fs.writeJson(path.join(historyLogFolder, `${date.getTime()}.json`), {
                 status : 'up',
-                date 
+                date,
+                point 
             })
 
+        //test point
+        console.log("Pass point: "+point)
         return { 
             changed,
-            downDate
+            downDate,
+            point
         }
     },
     
+    /* Reading the last event from the history folder. */
     async getLastEvent(safeName){
         let settings = require('./settings').get(),
             log = require('./../lib/logger').instance(),
@@ -80,15 +94,26 @@ module.exports = {
     },
 
     async writeFailing(safeName, date, error){
+        const event = await this.getLastEvent(safeName)
         let settings = require('./settings').get(),
             fs = require('fs-extra'),
             path = require('path'),
             downFlag = path.join(settings.logs, safeName, 'flag'),
             changed = false,
-            historyLogFolder = path.join(settings.logs, safeName, 'history')
-
+            historyLogFolder = path.join(settings.logs, safeName, 'history'),
+            point = 100
+        
+        if (event != null && event.status !== 'up'){
+            //test
+            console.log("Fail Log point: "+event.point)
+            point = parseInt(event.point) - 1
+        }
+        if(event != null && event.status !== 'down'){
+            //test
+            console.log("Fail Log point: "+event.point)
+            point = parseInt(event.point)
+        }
         if (!await fs.exists(downFlag)){
-
             await fs.ensureDir(historyLogFolder)
 
             // site is down, write fail flag and log
@@ -97,19 +122,42 @@ module.exports = {
             await fs.writeJson(path.join(historyLogFolder, `${date.getTime()}.json`), {
                 status : 'down',
                 date,
+                point,
                 error
             })
 
             await fs.writeJson(path.join(historyLogFolder, `status.json`), {
                 status : 'down',
-                date : this.lastRun
+                date : this.lastRun,
+                point
             })
 
             changed = true
         }
+        else{
+            await fs.ensureDir(historyLogFolder)
 
+            await fs.writeJson(path.join(historyLogFolder, `${date.getTime()}.json`), {
+                status : 'down',
+                date,
+                point,
+                error
+            })
+
+            await fs.writeJson(path.join(historyLogFolder, `status.json`), {
+                status : 'down',
+                date : this.lastRun,
+                point
+            })
+
+            changed = true
+
+        }
+        //test point
+        console.log("Fail point: "+point)
         return {
-            changed
+            changed,
+            point
         }
 
     }

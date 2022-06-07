@@ -80,11 +80,12 @@ describe('lib/watcher/sendAlerts', async()=>{
     })
 
     it('lib/watcher/sendAlerts::happy::invalid recipient', async()=>{
-        createTestStructures()
+        const ctx = createTestStructures()
+        ctx.settings({
+            recipients : ['bogususer']
+        }) 
         const Watcher = require(_$+'lib/watcher'),
-            watcher = new Watcher({
-                recipients : 'bogususer'
-            })
+            watcher = new Watcher()
 
         watcher.sendAlerts()
     })

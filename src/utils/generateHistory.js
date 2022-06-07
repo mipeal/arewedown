@@ -45,7 +45,10 @@
             
         for (let i = 0 ; i < maxEventsPerWatcher; i ++){
             startDate = timebelt.addSeconds(startDate, -1 * chance.integer({min : minEventDuration, max : maxEventDuration})) 
+            // test
+            console.log(startDate)
             isPassing = !isPassing
+            console.log(isPassing)
             
             let error = isPassing ? undefined : chance.sentence({ words: chance.integer({ min: 10, max: 300 })})
 

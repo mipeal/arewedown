@@ -51,22 +51,37 @@ module.exports = express => {
                 let deltaDate = new Date(),
                     longestDuration = 0,
                     shortestDuration = Number.MAX_VALUE
+                let deltaPoint = 100,
+                    leastPoint = 0,
+                    highestPoint = Number.MAX_VALUE
 
                 for (const event of history){
-                    event.durationString = timebelt.timespanString( event.date, deltaDate, ' day(s)', ' hour(s)', ' minute(s)', ' second(s)')
+                    // event.durationString = timebelt.timespanString( event.date, deltaDate, ' day(s)', ' hour(s)', ' minute(s)', ' second(s)')
+                    event.durationString = event.point+" point(s)"
+                    //test for Points
+                    console.log(event.durationString)
                     event.durationMinutes = Math.log(timebelt.minutesDifference(event.date, deltaDate))
+                    // event.pointDiff = Math.log(timebelt.minutesDifference(event.point, deltaPoint))
 
                     if (event.durationMinutes > longestDuration)
                         longestDuration = event.durationMinutes
 
+                    // if (event.pointDiff > leastPoint)
+                    //     highestPoint = event.pointDiff
+
+                    // if (event.pointDiff < leastPoint)
+                    //     leastPoint = event.pointDiff
+                    
                     if (event.durationMinutes < shortestDuration)
-                        shortestDuration = event.durationMinutes
+                    shortestDuration = event.durationMinutes
 
                     deltaDate = event.date
+                    deltaPoint = event.point
                 }
 
                 for (const event of history)
-                    event.durationPercent = Math.floor(((event.durationMinutes - shortestDuration) * 100) / longestDuration) 
+                    event.durationPercent = Math.floor(((event.durationMinutes - shortestDuration) * 100) / longestDuration)
+                    // event.pointPercent = Math.floor(((event.pointDiff - leastPoint) * 100) / highestPoint)
 
             }
             
